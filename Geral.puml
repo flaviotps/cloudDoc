@@ -1,0 +1,97 @@
+@startuml
+
+ package Bridge {
+
+    package bridge.exception {
+         class CloudException
+         abstract AbstractCloudException
+    }
+
+    package bridge.client {
+       note "CloudBridge tem a implementação que constroi\nclients através da interface CloudBridgeInterface" as N1
+       N1 -right-> CloudBridgeInterface
+       N1 <-- CloudBridge
+
+        note "CloudClient serve como proxy para CloudBridge\npara ofuscar o método publico initialize" as N2
+        N2 -left-> CloudBridge
+        N2 <-- CloudClient
+
+       interface ICloudClient {
+        +<T> api(apiInterface: Class<T>) : T
+        +<T> api(apiInterface: kClass<T>) : T
+        +<T> api(cloudRequest: CloudRequest, classOf: Class<T>) : T
+        +<T> api(cloudRequest: CloudRequest, typeToken: TypeToken<T>) : T
+        +<T> api(cloudRequest: CloudRequest) : T
+        +clearSession(charonId : String)
+       }
+
+       class CloudBridge {
+       - cloudBridgeInterface : CloudBridgeInterface
+       - instance() : CloudBridgeInterface
+       + initialize(bridgeInterface : CloudBridgeInterface)
+       }
+
+       class CloudClient {
+        +create() : ICloudClient
+        +clearAllSessions()
+       }
+
+       interface CloudBridgeInterface {
+        +create(...) : ICloudClient
+        +clearAllSessions()
+       }
+
+              interface ICloudClient
+              interface CloudBridgeInterface
+              class CloudClient
+    }
+
+
+    CloudException ..|> AbstractCloudException
+
+    CloudClient ..|> ICloudClient
+}
+
+
+
+package core {
+    package core.exception {
+        class CloudCharonException
+        class CloudBodyException
+        class CloudHttpException
+        class CloudConversionException
+        class CloudIllegalException
+        class CloudInvalidLinksFormatException
+        class CloudLinksException
+        class CloudUnexpectedException
+        class CloudWbNotFoundException
+    }
+
+    package core.client {
+                note "O método create(...) instancia um novo ICloudClient\ncom a implementação de CloudClientImpl" as N0
+                N0 <-down- CloudBridgeInterfaceImpl
+                N0 -down-> CloudClientImpl
+               class CloudClientImpl
+               class CloudBridgeInterfaceImpl {
+                   +create(...) : ICloudClient
+                   +clearAllSessions()
+               }
+    }
+
+    CloudCharonException --|> CloudException
+    CloudBodyException --|> CloudException
+    CloudHttpException --|> CloudException
+    CloudConversionException --|> CloudException
+    CloudIllegalException --|> CloudException
+    CloudInvalidLinksFormatException --|> CloudException
+    CloudLinksException --|> CloudException
+    CloudUnexpectedException --|> CloudException
+    CloudWbNotFoundException --|> CloudException
+
+    CloudBridgeInterfaceImpl ..|> CloudBridgeInterface
+    CloudClientImpl ..|> ICloudClient
+
+}
+
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+
+package Bridge {
+package Exception {
+   class CloudException
+   abstract AbstractCloudException
+      CloudException ..|> AbstractCloudException
+    }
+}
+
+
+
+package Core {
+package Exceptions {
+    class CloudCharonException
+    class CloudBodyException
+    class CloudHttpException
+    class CloudConversionException
+    class CloudIllegalException
+    class CloudInvalidLinksFormatException
+    class CloudLinksException
+    class CloudUnexpectedException
+    class CloudWbNotFoundException
+    CloudCharonException --|> CloudException
+    CloudBodyException --|> CloudException
+    CloudHttpException --|> CloudException
+    CloudConversionException --|> CloudException
+    CloudIllegalException --|> CloudException
+    CloudInvalidLinksFormatException --|> CloudException
+    CloudLinksException --|> CloudException
+    CloudUnexpectedException --|> CloudException
+    CloudWbNotFoundException --|> CloudException
+    }
+}
+
+
+@enduml

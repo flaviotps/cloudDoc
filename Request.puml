@@ -1,0 +1,24 @@
+@startuml
+
+
+package core {
+    package core.request {
+           class CloudRequestInfo
+           class CallResponse
+           class CloudMethodInfo
+           class MethodInfo
+    }
+}
+
+
+package Bridge {
+    package bridge.request {
+       interface ICloudRequestInfo
+       class CloudRequest
+       class CallMethod
+    }
+}
+
+CloudRequestInfo --|> ICloudRequestInfo
+
+@enduml

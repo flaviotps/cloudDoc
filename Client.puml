@@ -1,0 +1,59 @@
+@startuml
+
+
+package core {
+
+    package core.client {
+            note "O método create(...) instancia um novo ICloudClient\ncom a implementação de CloudClientImpl" as N0
+            N0 <-down- CloudBridgeInterfaceImpl
+            N0 -down-> CloudClientImpl
+           class CloudClientImpl
+           class CloudBridgeInterfaceImpl {
+               +create(...) : ICloudClient
+               +clearAllSessions()
+           }
+    }
+}
+
+
+package Bridge {
+
+    package bridge.client {
+       note "CloudBridge tem a implementação que constroi\nclients através da interface CloudBridgeInterface" as N1
+       N1 -right-> CloudBridgeInterface
+       N1 <-- CloudBridge
+
+        note "CloudClient serve como proxy para CloudBridge\npara ofuscar o método publico initialize" as N2
+        N2 -left-> CloudBridge
+        N2 <-- CloudClient
+
+       CloudBridgeInterfaceImpl ..|> CloudBridgeInterface
+       CloudClientImpl ..|> ICloudClient
+       interface ICloudClient {
+        +<T> api(apiInterface: Class<T>) : T
+        +<T> api(apiInterface: kClass<T>) : T
+        +<T> api(cloudRequest: CloudRequest, classOf: Class<T>) : T
+        +<T> api(cloudRequest: CloudRequest, typeToken: TypeToken<T>) : T
+        +<T> api(cloudRequest: CloudRequest) : T
+        +clearSession(charonId : String)
+       }
+
+       class CloudBridge {
+       - {static}cloudBridgeInterface : CloudBridgeInterface
+       - {static}instance() : CloudBridgeInterface
+       + {static}initialize(bridgeInterface : CloudBridgeInterface)
+       }
+
+       class CloudClient {
+        +{static}create() : ICloudClient
+        +{static}clearAllSessions()
+       }
+
+       interface CloudBridgeInterface {
+        +create(...) : ICloudClient
+        +clearAllSessions()
+       }
+    }
+}
+
+@enduml
